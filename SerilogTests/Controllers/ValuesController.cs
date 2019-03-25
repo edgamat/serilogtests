@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SerilogTests.Controllers
@@ -12,8 +13,24 @@ namespace SerilogTests.Controllers
     {
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        [LoggingActionFilter("expiringQuoteId")]
+        public ActionResult<IEnumerable<string>> Get(string expiringQuoteId)
         {
+            if (expiringQuoteId == "123")
+            {
+                return BadRequest("BOOGA");
+            }
+
+            if (expiringQuoteId == "1234")
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "MY ERROR MESSAGE");
+            }
+
+            if (expiringQuoteId == "12345")
+            {
+                return StatusCode(StatusCodes.Status204NoContent, "NO CONTENT");
+            }
+
             return new string[] { "value1", "value2" };
         }
 
